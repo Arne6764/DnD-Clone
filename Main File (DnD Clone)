@@ -3,39 +3,59 @@
 */
 
 use std::io;
+use rand::Rng;
+
 struct Character {
     name: String,
     health: i32,
     damage: i32,
 }
+
 impl Character {
     fn attack(&self, other: &mut Character) {
-        println!("{} attacks {}!", self.name, other.name);
-        other.health -= self.damage;
-        println!("{} takes {} damage.", other.name, self.damage);
+        let player_roll = rand::thread_rng().gen_range(1..21); // roll a d20
+        let enemy_roll = rand::thread_rng().gen_range(1..21); // roll a d20
+        let player_total_damage = self.damage + player_roll; // add the roll to the base damage
+        let enemy_total_damage = other.damage + enemy_roll; // add the roll to the base damage
+        println!("{} attacks {} with a roll of {}!", self.name, other.name, player_roll);
+        other.health -= player_total_damage;
+        println!("{} takes {} damage.", other.name, player_total_damage);
         if other.health <= 0 {
             println!("{} has been defeated!", other.name);
         }
+        println!("{} attacks {} with a roll of {}!", other.name, self.name, enemy_roll);
+        self.health -= enemy_total_damage;
+        println!("{} takes {} damage.", self.name, enemy_total_damage);
+        if self.health <= 0 {
+            println!("{} has been defeated!", self.name);
+        }
     }
 }
+
+
 fn combat() {
     let mut player = Character {
         name: String::from("Player"),
         health: 100,
         damage: 20,
     };
+
     let mut enemy = Character {
         name: String::from("Enemy"),
         health: 80,
         damage: 15,
     };
+
     println!("A wild {} appears!", enemy.name);
+
     loop {
         println!("1. Attack");
         println!("2. Run");
+
         let mut choice = String::new();
         io::stdin().read_line(&mut choice)
             .expect("Failed to read line");
+
         match choice.trim() {
             "1" => {
                 player.attack(&mut enemy);
@@ -57,18 +77,21 @@ fn combat() {
         }
     }
 }
+
 fn main() {
     loop {
         println!("Welcome to the D&D Game!");
         println!("1. Start Game");
         println!("2. Shop");
         println!("3. Exit");
+
         let mut choice = String::new();
         io::stdin().read_line(&mut choice)
             .expect("Failed to read line");
+
         match choice.trim() {
             "1" => combat(),
-            "2" => shop_menu(),
+            "2" => store(),
             "3" => {
                 println!("Exiting the game. Goodbye!");
                 break;
@@ -77,7 +100,8 @@ fn main() {
         }
     }
 }
-fn shop_menu() {
+
+fn store() {
     println!("Welcome to the shop!");
-    // Add code for the shop menu here
+      
 }
