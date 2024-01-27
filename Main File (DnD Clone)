@@ -1,0 +1,83 @@
+/* 
+  NOT FINAL CODE, THIS IS A PRE-RELEASE VERSION
+*/
+
+use std::io;
+struct Character {
+    name: String,
+    health: i32,
+    damage: i32,
+}
+impl Character {
+    fn attack(&self, other: &mut Character) {
+        println!("{} attacks {}!", self.name, other.name);
+        other.health -= self.damage;
+        println!("{} takes {} damage.", other.name, self.damage);
+        if other.health <= 0 {
+            println!("{} has been defeated!", other.name);
+        }
+    }
+}
+fn combat() {
+    let mut player = Character {
+        name: String::from("Player"),
+        health: 100,
+        damage: 20,
+    };
+    let mut enemy = Character {
+        name: String::from("Enemy"),
+        health: 80,
+        damage: 15,
+    };
+    println!("A wild {} appears!", enemy.name);
+    loop {
+        println!("1. Attack");
+        println!("2. Run");
+        let mut choice = String::new();
+        io::stdin().read_line(&mut choice)
+            .expect("Failed to read line");
+        match choice.trim() {
+            "1" => {
+                player.attack(&mut enemy);
+                if enemy.health <= 0 {
+                    println!("You win!");
+                    break;
+                }
+                enemy.attack(&mut player);
+                if player.health <= 0 {
+                    println!("You have been defeated!");
+                    break;
+                }
+            },
+            "2" => {
+                println!("Ran away!");
+                break;
+            }
+            _ => println!("Invalid option. Please try again."),
+        }
+    }
+}
+fn main() {
+    loop {
+        println!("Welcome to the D&D Game!");
+        println!("1. Start Game");
+        println!("2. Shop");
+        println!("3. Exit");
+        let mut choice = String::new();
+        io::stdin().read_line(&mut choice)
+            .expect("Failed to read line");
+        match choice.trim() {
+            "1" => combat(),
+            "2" => shop_menu(),
+            "3" => {
+                println!("Exiting the game. Goodbye!");
+                break;
+            },
+            _ => println!("Invalid option. Please try again."),
+        }
+    }
+}
+fn shop_menu() {
+    println!("Welcome to the shop!");
+    // Add code for the shop menu here
+}
