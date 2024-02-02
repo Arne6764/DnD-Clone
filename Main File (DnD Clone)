@@ -1,107 +1,205 @@
-/* 
-  NOT FINAL CODE, THIS IS A PRE-RELEASE VERSION
+/*
+Hello world, if you are reading this, you are probably on the github page, this is a note for the other devs. (this is a solo project mostly made by the owner of the studio, but the other members have helped with certain parts of the code.)
+
+this will be published on github, try not to add NSFW content to keep this PG and okay to be shown at a job interview or programmed in a classroom.
+----------------------------------------------------------
+WHAT TO ADD:
+- tutorial (in code, currently have a temporary txt file for that)
+- characters
+- lore (something similar to high fantasy and Game of Thrones / LOTR type setting)
+- online? (in steam release)
+- classes (DnD type)
+- extra gameplay (random events, etc))
+- uniqe weapons	(something better than 'better sword' or 'better shield')
+- unique enemies (orcs, goblins, trolls, dragons, etc...)
+-----------------------------------------------------------
+
+-Arne6764
 */
 
-use std::io;
-use rand::Rng;
+use std::io; // used for input/output
+use rand::Rng; // used for the randomization and chances for things to happen, if you remove this, the game will be very boring
 
-struct Character {
-    name: String,
-    health: i32,
-    damage: i32,
-}
+// disclaimer: arne wrote most of the code (functions) for this project. i (cheese) wrote most of the classes and etc
 
-impl Character {
-    fn attack(&self, other: &mut Character) {
-        let player_roll = rand::thread_rng().gen_range(1..21); // roll a d20
-        let enemy_roll = rand::thread_rng().gen_range(1..21); // roll a d20
-        let player_total_damage = self.damage + player_roll; // add the roll to the base damage
-        let enemy_total_damage = other.damage + enemy_roll; // add the roll to the base damage
-        println!("{} attacks {} with a roll of {}!", self.name, other.name, player_roll);
-        other.health -= player_total_damage;
-        println!("{} takes {} damage.", other.name, player_total_damage);
-        if other.health <= 0 {
-            println!("{} has been defeated!", other.name);
-        }
-        println!("{} attacks {} with a roll of {}!", other.name, self.name, enemy_roll);
-        self.health -= enemy_total_damage;
-        println!("{} takes {} damage.", self.name, enemy_total_damage);
-        if self.health <= 0 {
-            println!("{} has been defeated!", self.name);
-        }
+
+// townsperson class v
+struct Townsperson {
+  name: String,
+  name_gen: Vec<String>,
+  hitpoints: i32,
+  list_of_quests: Vec<String>,
+  payment_list: Vec<i32>,
+  item_list: Vec<String>,
+  dialogue: Vec<String>,
+  
+ 
+} 
+// town function
+fn town() {
+  let mut new_person = Townsperson {
+    name: "".to_string(), 
+    name_gen: vec!["Dumbledore".to_string(), "Garrick".to_string(), "Cameron".to_string(), "Daeana".to_string(), "Sparkles".to_string(), "Korvin".to_string(), "Llorva".to_string(), "Bilbo".to_string(), "Gandalf".to_string(), "Cirdaya".to_string(), "Fangorn".to_string(), "Jarilam".to_string(), "Ermina".to_string(), "Murdoc".to_string(), "Jarilam".to_string()],
+    hitpoints: 100,
+    list_of_quests: vec!["Go murder a dragon".to_string()],
+    payment_list: vec![10],
+    item_list: vec!["sword".to_string(), "shield".to_string()],
+    dialogue: vec!["Good day! Welcome to our village!".to_string()],
+  };
+  let random_name = rand::thread_rng().gen_range(0..new_person.name_gen.len());
+  new_person.name = new_person.name_gen[random_name].to_string();
+  println!("As you make your way towards the town, a person approaches you. It looks like they're on the upper class.");
+  println!("Do you want to talk to them?");
+  println!("1: yes");
+  println!("2: no");
+  let mut inp = String::new();
+  io::stdin().read_line(&mut inp).expect("Failed to read line");
+  if inp != "yes" {
+    println!("You coldly walk away from the townsperson, leaving them disappointed and confused.");
+    walking_on_road();
+  } 
+  else {
+    println!("You walk up to the townsperson, and they look at you with a smile.");
+    println!("{}", new_person.dialogue[0]);
+    println!("My name is {}, and I have a few tasks for tough adventurers like you! Would you like one?", new_person.name);
+    println!("1: yes");
+    println!("2: no");
+    let mut inp = String::new();
+    io::stdin().read_line(&mut inp).expect("Failed to read line");
+    if inp != "yes" {
+      println!("quest shit i havent programmed yet");
+      println!("i have to write a FUCKING PAPER about bears eating themselves.")
     }
-}
+  }
+}  
 
-
+//combat system
 fn combat() {
-    let mut player = Character {
-        name: String::from("Player"),
-        health: 100,
-        damage: 20,
-    };
+	println!("You encounter an enemy!");
+	let mut player_health = 100;
+	let mut enemy_health = 100;
 
-    let mut enemy = Character {
-        name: String::from("Enemy"),
-        health: 80,
-        damage: 15,
-    };
+	while player_health > 0 && enemy_health > 0 {
+		println!("Player Health: {}, Enemy Health: {}", player_health, enemy_health);
 
-    println!("A wild {} appears!", enemy.name);
+		// Player's turn
+		let mut input = String::new();
+		println!("Choose your action:");
+		println!("1. Attack");
+		println!("2. Defend");
+		io::stdin().read_line(&mut input).expect("Failed to read line");
+		let action = input.trim();
 
-    loop {
-        println!("1. Attack");
-        println!("2. Run");
+		if action == "1" {
+			let player_damage = rand::thread_rng().gen_range(10..=20);
+			enemy_health -= player_damage;
+			println!("You attack the enemy for {} damage!", player_damage);
+		} else if action == "2" {
+			println!("You choose to defend.");
+		} else {
+			println!("Invalid action!");
+		}
 
-        let mut choice = String::new();
-        io::stdin().read_line(&mut choice)
-            .expect("Failed to read line");
+		// Enemy's turn
+		if enemy_health > 0 {
+			let enemy_damage = rand::thread_rng().gen_range(10..=15);
+			player_health -= enemy_damage;
+			println!("The enemy attacks you for {} damage!", enemy_damage);
+		}
+	}
 
-        match choice.trim() {
-            "1" => {
-                player.attack(&mut enemy);
-                if enemy.health <= 0 {
-                    println!("You win!");
-                    break;
-                }
-                enemy.attack(&mut player);
-                if player.health <= 0 {
-                    println!("You have been defeated!");
-                    break;
-                }
-            },
-            "2" => {
-                println!("Ran away!");
-                break;
-            }
-            _ => println!("Invalid option. Please try again."),
-        }
-    }
+	if player_health <= 0 {
+		println!("You were defeated in combat!");
+	} else {
+		println!("You defeated the enemy!");
+	}
 }
-
+// new stuff
+fn new_item() {
+	println!("You found a new item:");
+	println!("1. Better Sword (+5% damage in combat)");
+	println!("2. Better Shield (+5% defense in combat)");
+	let mut input = String::new();
+	io::stdin().read_line(&mut input).expect("Failed to read line");
+	if input.trim() == "1" {
+		println!("You equip the Better Sword.");
+		// Apply Better Sword effects in combat
+	} else if input.trim() == "2" {
+		println!("You equip the Better Shield.");
+		// Apply Better Shield effects in combat
+	} else {
+		println!("Invalid item choice!");
+	}
+}
+// simple, self-explanitory
+fn start_game() {
+	let random_number = rand::thread_rng().gen::<f64>();
+	if random_number < 0.5 {
+		ambush();
+	} else {
+		walking_on_road();
+	}
+}
+// ambush!
+fn ambush() {
+	println!("You've been ambushed!");
+	combat();
+}
+// going for a nice calm stroll...right?
+fn walking_on_road() {
+	println!("You are walking on the road.");
+	println!("1. Continue walking");
+	println!("2. Search for items");
+	println!("3. Rest");
+	let mut input = String::new();
+	io::stdin().read_line(&mut input).expect("Failed to read line");
+	if input.trim() == "1" {
+		let random_number = rand::thread_rng().gen::<f64>();
+		if random_number < 0.75 {
+			ambush();
+		} else if random_number < 0.10 {
+			town();
+		} else {
+			walking_on_road();
+		}
+	} else if input.trim() == "2" {
+		new_item();
+	} else if input.trim() == "3" {
+		println!("You rested and regained some health.");
+	}
+}
+// main
 fn main() {
-    loop {
-        println!("Welcome to the D&D Game!");
-        println!("1. Start Game");
-        println!("2. Shop");
-        println!("3. Exit");
+	loop {
+		println!("---");
+		println!("MAIN MENU");
+		println!("---");
+		println!("1. Start");
+		println!("2. Credits");
+		println!("3. Message from devs");
+		println!("4. Exit");
+		println!("---");
 
-        let mut choice = String::new();
-        io::stdin().read_line(&mut choice)
-            .expect("Failed to read line");
-
-        match choice.trim() {
-            "1" => combat(),
-            "2" => store(),
-            "3" => {
-                println!("Exiting the game. Goodbye!");
-                break;
-            },
-            _ => println!("Invalid option. Please try again."),
-        }
-    }
+		let mut input = String::new();
+		io::stdin().read_line(&mut input).expect("Failed to read line");
+		if input.trim() == "1" {
+			start_game();
+		} else if input.trim() == "4" {
+			break;
+		} else if input.trim() == "2" {
+			println!("Lead dev:");
+			println!("https://www.github.com/Arne6764");
+			println!("Friend who helped fix the code:");
+			println!("https://www.github.com/CheddarCheesee");
+			println!("Tools used to create game:");
+			println!("https://www.replit.com");
+			println!("https://www.rust-lang.org");
+			println!("https://www.github.com");
+		} else if input.trim() == "3" {
+			println!("Hello world! sorry for low quality, I just made this because I got bored and had nothing better to do. All errors will (hopefully) be fixed soon. -Arne6764");
+		} else {
+			println!("You failed, go to the gulag.");
+		}
+	}
 }
-
-fn store() {
-    println!("Welcome to the shop!");
-      
-}
+// current end of code
