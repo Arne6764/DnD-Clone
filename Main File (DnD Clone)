@@ -67,6 +67,7 @@ fn town() {
     let mut inp = String::new();
     io::stdin().read_line(&mut inp).expect("Failed to read line");
     if inp != "yes" {
+// sorry for the immature notes left by cheesee, i (arne) did not make this portion, so i cannot change that. -Arne
       println!("quest shit i havent programmed yet");
       println!("i have to write a FUCKING PAPER about bears eating themselves.")
     }
